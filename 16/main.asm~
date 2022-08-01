@@ -1,0 +1,85 @@
+%include 'functions.asm'
+
+SECTION .data
+msg     db  ' resto: '  , 0
+number  db '111' , 0
+char_linefeed  db  0xA
+
+SECTION .bss
+char_to_print   resb    1
+
+
+SECTION .text
+
+global _start
+
+_start:
+
+
+    mov     eax , number
+    call    atoi
+
+    mov     eax , edx
+    call    print_itoa
+
+    call    exit
+
+
+atoi:
+
+    push    eax
+    push    ebx
+    push    ecx
+    push    esi
+    push    edi
+
+    call    strlen
+    dec     ecx         ;transform ecx(len of string) in index of my string -- ecx is index of string
+
+    mov     esi , eax   ; esi is my string
+    mov     edi , 1     ; edi is power of 10
+    mov     edx , 0     ; final result
+
+loop_atoi:
+
+	    mov     ebx , 0
+	    mov     bl , [esi + ecx]
+	    sub     bl , 48
+
+	
+	
+	    ;multiply ebx by edi(cur power of 10)
+	    mov     eax , ebx
+	    mul     edi
+	    mov     ebx , eax
+
+
+	    ;sum
+	    add     edx , ebx
+
+	    ;multiply edi by 10
+	    mov     eax , edi
+	    mov     ebx , 10
+	    mul     ebx
+	    mov	    edi , eax
+
+	    
+	    cmp     ecx , 0
+	    je      end_atoi
+	    dec     ecx
+	    jmp     loop_atoi
+
+
+
+
+end_atoi:
+
+    pop     edi
+    pop     esi
+    pop     ecx
+    pop     ebx
+    pop     eax
+
+    ret
+
+
